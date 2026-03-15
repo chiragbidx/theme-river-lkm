@@ -1,6 +1,8 @@
 import { pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
 
+// Existing user/team schemas...
+
 export const users = pgTable("users", {
   id: text("id")
     .notNull()
@@ -76,3 +78,23 @@ export const teamInvitations = pgTable("team_invitations", {
     .notNull()
     .defaultNow(),
 });
+
+// --- NEW: Access requests (for landing page demo lead gen/demo CTA requests)
+
+export const accessRequests = pgTable(
+  "access_requests",
+  {
+    id: text("id")
+      .notNull()
+      .default(sql`gen_random_uuid()`)
+      .primaryKey(),
+    email: text("email").notNull(),
+    requestedAt: timestamp("requested_at", { withTimezone: true }).notNull().defaultNow(),
+    ip: text("ip"),
+    userAgent: text("user_agent"),
+    context: text("context"), // for storing page/activity data if desired
+  },
+  (table) => [
+    uniqueIndex("access_requests_email_request_idx").on(table.email, table.requestedAt),
+  ]
+);
