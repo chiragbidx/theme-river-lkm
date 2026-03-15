@@ -10,28 +10,28 @@ interface BenefitsProps {
 
 const benefitList: BenefitsProps[] = [
   {
-    icon: "Blocks",
-    title: "Ship With Confidence",
+    icon: "Send",
+    title: "Launch in Days",
     description:
-      "Start from proven architecture and avoid redoing auth, layout, and deployment setup.",
+      "Skip the dev wait—Mailvanta gets your first campaign out the door fast.",
   },
   {
-    icon: "LineChart",
-    title: "Faster Time To Revenue",
+    icon: "GaugeCircle",
+    title: "Deliverability First",
     description:
-      "Focus on product validation while the starter handles the repetitive engineering basics.",
+      "World-class sender reputation and deep monitoring as you grow.",
   },
   {
-    icon: "Wallet",
-    title: "Lower Build Cost",
+    icon: "BarChartBig",
+    title: "Actionable Analytics",
     description:
-      "Reusable components and patterns reduce rework and keep your team moving efficiently.",
+      "See real impact with open/click metrics, audience insights, and campaign health.",
   },
   {
-    icon: "Sparkle",
-    title: "Cleaner UX By Default",
+    icon: "Zap",
+    title: "Automate Leads",
     description:
-      "Responsive sections, dark mode, and polished UI primitives create a premium first impression.",
+      "Set up hands-off automations, onboarding drips, and triggered sends in minutes.",
   },
 ];
 
@@ -40,14 +40,13 @@ export const LayoutBenefitsSection = () => {
     <section id="benefits" className="container py-24 sm:py-32">
       <div className="grid lg:grid-cols-2 place-items-center lg:gap-24">
         <div>
-          <h2 className="text-lg text-primary mb-2 tracking-wider">Why Panda</h2>
+          <h2 className="text-lg text-primary mb-2 tracking-wider">Why Mailvanta</h2>
 
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            A practical SaaS app builder starter
+            Simple, scalable email marketing for startups
           </h2>
           <p className="text-xl text-muted-foreground mb-8">
-            Built for teams that want production-ready foundations with room to
-            customize, not a rigid template you outgrow in a week.
+            We handle templates, sender reputation, analytics, and compliance—so you stay focused on reaching your customers and hitting growth goals.
           </p>
         </div>
 
@@ -81,4 +80,4 @@ export const LayoutBenefitsSection = () => {
       </div>
     </section>
   );
-};
+}
