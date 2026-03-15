@@ -33,18 +33,21 @@ interface FeatureProps {
   description: string;
 }
 
-// Landing page logo config.
-// Update these values to customize the navbar logo name and icon styling.
+// Updated logo config for Mailvanta SaaS
 const LANDING_LOGO = {
-  name: "Panda",
+  name: "Mailvanta",
   iconClassName:
-    "bg-gradient-to-tr border-secondary from-primary via-primary/70 to-primary rounded-lg w-9 h-9 mr-2 border text-white",
+    "bg-gradient-to-tr border-secondary from-[#3B82F6] via-[#14B8A6] to-[#D247BF] rounded-lg w-9 h-9 mr-2 border text-white",
 };
 
 const routeList: RouteProps[] = [
   {
-    href: "/#testimonials",
-    label: "Testimonials",
+    href: "/#features",
+    label: "Features",
+  },
+  {
+    href: "/#pricing",
+    label: "Pricing",
   },
   {
     href: "/#team",
@@ -62,16 +65,16 @@ const routeList: RouteProps[] = [
 
 const featureList: FeatureProps[] = [
   {
-    title: "Auth, Billing, Teams",
-    description: "Production-ready flows for sign-in, subscriptions, and organizations.",
+    title: "Campaign Automations",
+    description: "Send drip campaigns, one-off blasts, and triggers with ease.",
   },
   {
-    title: "UI + Design System",
-    description: "Shadcn-based components with consistent theming and dark mode support.",
+    title: "Deep Analytics",
+    description: "Open/click tracking, deliverability, and insights right in your dashboard.",
   },
   {
-    title: "Deploy Fast",
-    description: "Sane defaults for Next.js, TypeScript, and Vercel-first deployment.",
+    title: "List Growth Tools",
+    description: "Forms, segments, and advanced list hygiene.",
   },
 ];
 
@@ -135,7 +138,7 @@ export const Navbar = () => {
                   asChild
                   className="justify-start text-base"
                 >
-                  <Link href="/auth#signup">Sign up</Link>
+                  <Link href="/access-request">Request Access</Link>
                 </Button>
               </div>
             </div>
@@ -154,13 +157,13 @@ export const Navbar = () => {
         <NavigationMenuList>
           <NavigationMenuItem>
             <NavigationMenuTrigger className="bg-card text-base">
-              Features
+              Product
             </NavigationMenuTrigger>
             <NavigationMenuContent>
               <div className="grid w-[600px] grid-cols-2 gap-5 p-4">
                 <Image
                   src="/demo-img.jpg"
-                  alt="Panda preview"
+                  alt="Campaign preview"
                   className="h-full w-full rounded-md object-cover"
                   width={600}
                   height={600}
@@ -201,14 +204,14 @@ export const Navbar = () => {
           <Link href="/auth#signin">Sign in</Link>
         </Button>
         <Button asChild size="sm">
-          <Link href="/auth#signup">Sign up</Link>
+          <Link href="/access-request">Request Access</Link>
         </Button>
         <ThemeToggle mode="inline" className="w-auto justify-center" />
 
         <Button asChild size="sm" variant="ghost" aria-label="View on GitHub">
           <Link
             aria-label="View on GitHub"
-            href="https://nextjs.org/docs"
+            href="https://github.com"
             target="_blank"
           >
             <Github className="size-5" />
