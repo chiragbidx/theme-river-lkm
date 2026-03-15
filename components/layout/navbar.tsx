@@ -63,6 +63,17 @@ const routeList: RouteProps[] = [
   },
 ];
 
+const legalList: RouteProps[] = [
+  {
+    href: "/privacy",
+    label: "Privacy Policy",
+  },
+  {
+    href: "/terms",
+    label: "Terms of Service",
+  },
+];
+
 const featureList: FeatureProps[] = [
   {
     title: "Campaign Automations",
@@ -125,6 +136,19 @@ export const Navbar = () => {
                     <Link href={href}>{label}</Link>
                   </Button>
                 ))}
+                <Separator className="my-2" />
+                {legalList.map(({ href, label }) => (
+                  <Button
+                    key={href}
+                    onClick={() => setIsOpen(false)}
+                    asChild
+                    variant="ghost"
+                    className="justify-start text-base"
+                  >
+                    <Link href={href}>{label}</Link>
+                  </Button>
+                ))}
+                <Separator className="my-2" />
                 <Button
                   onClick={() => setIsOpen(false)}
                   asChild
@@ -195,6 +219,21 @@ export const Navbar = () => {
                 </Link>
               </NavigationMenuLink>
             ))}
+          </NavigationMenuItem>
+
+          <NavigationMenuItem>
+            <NavigationMenuTrigger className="bg-card text-base">
+              Legal
+            </NavigationMenuTrigger>
+            <NavigationMenuContent>
+              <ul className="flex flex-col gap-2 p-3 min-w-[180px]">
+                {legalList.map(({ href, label }) => (
+                  <li key={href}>
+                    <Link href={href} className="text-base opacity-80 hover:opacity-100">{label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </NavigationMenuContent>
           </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
