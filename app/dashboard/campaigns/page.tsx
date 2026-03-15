@@ -2,12 +2,11 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { getTeamCampaigns, createCampaignAction, getCampaignRecipients } from "./actions";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRouter } from "next/navigation";
 import { Loader2, Mail, PlusCircle, Users, Check, Clock, Ban, Send } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
@@ -185,10 +184,15 @@ function CreateCampaignModal({ onClose, creating, setCreating, setError, setSucc
     setCreating(true);
     setError(null);
 
-    // Correct way: build FormData manually from collected data
+    if (!data || typeof data !== "object") {
+      setError("Form submission failed. Please refresh and try again.");
+      setCreating(false);
+      return;
+    }
+    // Defensive: prevent crash on bad data/submit
     const fd = new FormData();
     Object.entries(data).forEach(([key, val]) => {
-      fd.append(key, val as string);
+      if (val != null) fd.append(key, val as string);
     });
 
     const res = await createCampaignAction(fd);
