@@ -92,9 +92,49 @@ export const accessRequests = pgTable(
     requestedAt: timestamp("requested_at", { withTimezone: true }).notNull().defaultNow(),
     ip: text("ip"),
     userAgent: text("user_agent"),
-    context: text("context"), // for storing page/activity data if desired
+    context: text("context"),
   },
   (table) => [
     uniqueIndex("access_requests_email_request_idx").on(table.email, table.requestedAt),
+  ]
+);
+
+// --- NEW: Campaigns & Recipients (for bulk email sending) ---
+
+export const campaigns = pgTable(
+  "campaigns",
+  {
+    id: text("id").notNull().default(sql`gen_random_uuid()`).primaryKey(),
+    teamId: text("team_id")
+      .notNull()
+      .references(() => teams.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    subject: text("subject").notNull(),
+    fromEmail: text("from_email").notNull(),
+    status: text("status").notNull().default("draft"), // draft, scheduled, sent, failed
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }),
+    createdBy: text("created_by").notNull().references(() => users.id),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("team_campaigns_unique_idx").on(table.teamId, table.name),
+  ]
+);
+
+export const campaignRecipients = pgTable(
+  "campaign_recipients",
+  {
+    id: text("id").notNull().default(sql`gen_random_uuid()`).primaryKey(),
+    campaignId: text("campaign_id")
+      .notNull()
+      .references(() => campaigns.id, { onDelete: "cascade" }),
+    email: text("email").notNull(),
+    status: text("status").notNull().default("pending"), // pending, sent, failed
+    sentAt: timestamp("sent_at", { withTimezone: true }),
+    errorMsg: text("error_msg"),
+  },
+  (table) => [
+    uniqueIndex("campaign_recipient_unique_idx").on(table.campaignId, table.email),
   ]
 );
