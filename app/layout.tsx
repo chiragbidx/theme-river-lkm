@@ -7,8 +7,30 @@ import ErrorReporter from "../components/ErrorReporter";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 
 export const metadata: Metadata = {
-  title: "Panda - SaaS App Builder Starter",
-  description: "Production-ready SaaS app builder starter template with modern UI, dark mode, and launch-ready sections.",
+  title: "Mailvanta — Simple, powerful email marketing SaaS",
+  description: "Launch email campaigns, automations, and collect actionable insights with Mailvanta. Built for founders and teams who want to get results fast.",
+  openGraph: {
+    title: "Mailvanta — Simple, powerful email marketing SaaS",
+    description: "Launch email campaigns, automations, and collect actionable insights with Mailvanta.",
+    url: process.env.BASE_URL ?? "https://mailvanta.com",
+    type: "website",
+    images: [
+      {
+        url: "/hero-image-light.jpeg",
+        width: 1600,
+        height: 900,
+        alt: "Mailvanta email SaaS dashboard preview",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@chiragdodiya",
+    title: "Mailvanta — Simple, powerful email marketing SaaS",
+    description: "Launch email campaigns, automations, and collect actionable insights with Mailvanta.",
+    creator: "@chiragdodiya",
+    images: ["/hero-image-light.jpeg"],
+  },
 };
 
 export default function RootLayout({
