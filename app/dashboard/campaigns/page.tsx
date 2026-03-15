@@ -184,7 +184,14 @@ function CreateCampaignModal({ onClose, creating, setCreating, setError, setSucc
   async function onSubmit(data: any) {
     setCreating(true);
     setError(null);
-    const res = await createCampaignAction(new FormData(Object.entries(data).reduce((fd, [key, val]) => { fd.append(key, val as string); return fd; }, new FormData())));
+
+    // Correct way: build FormData manually from collected data
+    const fd = new FormData();
+    Object.entries(data).forEach(([key, val]) => {
+      fd.append(key, val as string);
+    });
+
+    const res = await createCampaignAction(fd);
     setCreating(false);
     if (res?.ok) {
       setModalSuccess("Campaign created and scheduled.");
