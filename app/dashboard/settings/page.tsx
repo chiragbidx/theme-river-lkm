@@ -1,7 +1,6 @@
 import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
-import { User, Mail, Lock, AlertTriangle } from "lucide-react";
-
+import { User, Mail, Lock, AlertTriangle, MessageCircle } from "lucide-react";
 import {
   updateProfileAction,
   updateEmailAction,
@@ -23,6 +22,7 @@ import { Separator } from "@/components/ui/separator";
 import { getAuthSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/client";
 import { users } from "@/lib/db/schema";
+import Link from "next/link";
 
 type SettingsPageProps = {
   searchParams?: Promise<{
@@ -69,6 +69,27 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         <p className="mt-1 text-sm text-muted-foreground">
           Manage your account profile, email, and security.
         </p>
+      </div>
+
+      <div className="mb-6">
+        <Card className="bg-muted/40">
+          <CardHeader className="flex flex-row items-center gap-3 pb-2">
+            <MessageCircle className="size-4 text-primary" />
+            <CardTitle className="text-base">Mailvanta Early Access</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm mb-3">
+              Thank you for joining early! For dashboard support, feature ideas, or to report an issue,
+              reach out directly to founder{" "}
+              <Link href="mailto:hi@chirag.co" className="underline text-primary">Chirag Dodiya</Link>.
+            </p>
+            <Button asChild variant="secondary" size="sm">
+              <Link href="mailto:hi@chirag.co">
+                <Mail className="size-4 mr-1" /> Contact Support
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
       {status && message ? (
