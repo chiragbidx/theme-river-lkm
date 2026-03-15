@@ -8,6 +8,7 @@ import {
   UserMinus,
   UserPlus,
   UsersRound,
+  MessageSquare,
 } from "lucide-react";
 
 import {
@@ -34,6 +35,7 @@ import { InviteLogger } from "@/components/dashboard/invite-logger";
 import { getAuthSession } from "@/lib/auth/session";
 import { db } from "@/lib/db/client";
 import { teamInvitations, teamMembers, teams, users } from "@/lib/db/schema";
+import Link from "next/link";
 
 type TeamPageProps = {
   searchParams?: Promise<{
@@ -152,6 +154,24 @@ export default async function TeamPage({ searchParams }: TeamPageProps) {
       <InviteLogger url={inviteUrl} />
       <div className="mb-8">
         <h1 className="text-2xl font-semibold tracking-tight">Team</h1>
+        <Card className="mb-5 bg-muted/40">
+          <CardHeader className="flex flex-row items-center gap-3 pb-2">
+            <MessageSquare className="size-4 text-primary" />
+            <CardTitle className="text-base">Mailvanta Early Access</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm mb-2">
+              Welcome to Mailvanta! <br />
+              As an early user, you can invite team members and help shape our product roadmap.
+              For ideas or support, email <a className="underline text-primary" href="mailto:hi@chirag.co">Chirag Dodiya</a>.
+            </p>
+            <Button asChild variant="secondary" size="sm">
+              <Link href="mailto:hi@chirag.co">
+                <Mail className="size-4 mr-1" /> Contact Founder
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
         <p className="mt-1 text-sm text-muted-foreground">
           Manage members, roles, and invitations for{" "}
           <span className="font-medium text-foreground">{team.name}</span>.
