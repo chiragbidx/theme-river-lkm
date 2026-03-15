@@ -21,7 +21,7 @@ async function requireTeamAdmin(teamId: string, userId: string) {
 }
 
 // Zod campaign creation schema
-export const campaignSchema = z.object({
+const campaignSchema = z.object({
   name: z.string().min(3).max(100),
   subject: z.string().min(4).max(200),
   fromEmail: z.string().email(),
