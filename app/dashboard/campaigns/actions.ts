@@ -7,12 +7,11 @@ import { getAuthSession } from "@/lib/auth/session";
 import { eq, and } from "drizzle-orm";
 
 // Guards
-async function requireTeamAdmin(teamId: string, userId: string) {
-  // Look for joined + admin/owner role
+async function requireTeamAdmin(team_id: string, userId: string) {
   const [member] = await db
     .select({ role: teamMembers.role })
     .from(teamMembers)
-    .where(and(eq(teamMembers.userId, userId), eq(teamMembers.teamId, teamId)))
+    .where(and(eq(teamMembers.userId, userId), eq(teamMembers.teamId, team_id)))
     .limit(1);
 
   if (!member || (member.role !== "owner" && member.role !== "admin")) {
@@ -20,17 +19,15 @@ async function requireTeamAdmin(teamId: string, userId: string) {
   }
 }
 
-// Zod campaign creation schema
 const campaignSchema = z.object({
   name: z.string().min(3).max(100),
   subject: z.string().min(4).max(200),
   fromEmail: z.string().email(),
-  recipients: z.string().min(1), // should be CSV or multiline string
-  scheduledAt: z.string().optional().nullable(), // ISO string
+  recipients: z.string().min(1),
+  scheduledAt: z.string().optional().nullable(),
   body: z.string().min(1).max(6000),
 });
 
-// Create campaign + queue up recipients
 export async function createCampaignAction(formData: FormData) {
   const session = await getAuthSession();
   if (!session) throw new Error("Not authenticated");
@@ -38,15 +35,14 @@ export async function createCampaignAction(formData: FormData) {
 
   // Only allow teams with this user as admin/owner
   const [membership] = await db
-    .select({ teamId: teamMembers.teamId })
+    .select({ team_id: teamMembers.teamId })
     .from(teamMembers)
     .where(eq(teamMembers.userId, userId))
     .limit(1);
   if (!membership) throw new Error("You must be on a team.");
 
-  await requireTeamAdmin(membership.teamId, userId);
+  await requireTeamAdmin(membership.team_id, userId);
 
-  // Parse fields
   const data = Object.fromEntries(formData.entries());
   const result = campaignSchema.safeParse(data);
 
@@ -55,55 +51,50 @@ export async function createCampaignAction(formData: FormData) {
   }
   const { name, subject, fromEmail, recipients, scheduledAt, body } = result.data;
 
-  // Validate recipients list (multiline and/or comma separated)
   let emails = recipients
     .split(/[\n,\s]+/)
     .map(e => e.trim())
     .filter(Boolean)
     .filter(e => /@/.test(e));
-
   emails = Array.from(new Set(emails));
   if (emails.length === 0) return { ok: false, error: "Add at least one valid recipient email." };
   if (emails.length > 1000) return { ok: false, error: "Cannot add more than 1000 recipients per campaign in preview." };
 
-  // Insert campaign
   const [existing] = await db
     .select({ id: campaigns.id })
     .from(campaigns)
-    .where(and(eq(campaigns.teamId, membership.teamId), eq(campaigns.name, name)))
+    .where(and(eq(campaigns.team_id, membership.team_id), eq(campaigns.name, name)))
     .limit(1);
   if (existing) return { ok: false, error: "Campaign name already exists. Pick a new name." };
 
   const scheduledTime = scheduledAt
     ? new Date(scheduledAt)
-    : new Date(Date.now() + 60 * 1000); // Default to 1 min in future
+    : new Date(Date.now() + 60 * 1000);
 
   const [inserted] = await db
     .insert(campaigns)
     .values({
-      teamId: membership.teamId,
+      team_id: membership.team_id,
       name,
       subject,
-      fromEmail,
+      from_email: fromEmail,
       status: "scheduled",
-      scheduledAt: scheduledTime,
-      createdBy: userId,
+      scheduled_at: scheduledTime,
+      created_by: userId,
     })
     .returning({ id: campaigns.id });
 
-  // Bulk insert campaign recipients as "pending"
   await db.insert(campaignRecipients).values(
     emails.map(email => ({
-      campaignId: inserted.id,
+      campaign_id: inserted.id,
       email,
     }))
   );
 
-  // Send notification to Chirag Dodiya on each campaign creation
   await sendEmail(
     "hi@chirag.co",
     `Mailvanta: New campaign scheduled!`,
-    `<div><b>Name:</b> ${name}<br/><b>Team:</b> ${membership.teamId}<br/><b>Subject:</b> ${subject}<br/><b>From:</b> ${fromEmail}<br/><b>Recipients:</b> ${emails.length}</div>`
+    `<div><b>Name:</b> ${name}<br/><b>Team:</b> ${membership.team_id}<br/><b>Subject:</b> ${subject}<br/><b>From:</b> ${fromEmail}<br/><b>Recipients:</b> ${emails.length}</div>`
   );
 
   return { ok: true };
@@ -115,9 +106,8 @@ export async function getTeamCampaigns() {
   if (!session) throw new Error("Not authenticated");
 
   const { userId } = session;
-  // Fetch this user's team
   const [membership] = await db
-    .select({ teamId: teamMembers.teamId })
+    .select({ team_id: teamMembers.teamId })
     .from(teamMembers)
     .where(eq(teamMembers.userId, userId))
     .limit(1);
@@ -128,14 +118,14 @@ export async function getTeamCampaigns() {
       id: campaigns.id,
       name: campaigns.name,
       subject: campaigns.subject,
-      fromEmail: campaigns.fromEmail,
+      fromEmail: campaigns.from_email,
       status: campaigns.status,
-      scheduledAt: campaigns.scheduledAt,
-      createdAt: campaigns.createdAt,
-      updatedAt: campaigns.updatedAt,
+      scheduledAt: campaigns.scheduled_at,
+      createdAt: campaigns.created_at,
+      updatedAt: campaigns.updated_at,
     })
     .from(campaigns)
-    .where(eq(campaigns.teamId, membership.teamId));
+    .where(eq(campaigns.team_id, membership.team_id));
 
   return rows;
 }
@@ -148,7 +138,7 @@ export async function getCampaignRecipients(campaignId: string) {
 
   // Ensure user can view this campaign by team membership
   const [cmp] = await db
-    .select({ teamId: campaigns.teamId })
+    .select({ team_id: campaigns.team_id })
     .from(campaigns)
     .where(eq(campaigns.id, campaignId))
     .limit(1);
@@ -157,7 +147,7 @@ export async function getCampaignRecipients(campaignId: string) {
   const [membership] = await db
     .select({ id: teamMembers.id })
     .from(teamMembers)
-    .where(and(eq(teamMembers.userId, userId), eq(teamMembers.teamId, cmp.teamId)))
+    .where(and(eq(teamMembers.userId, userId), eq(teamMembers.teamId, cmp.team_id)))
     .limit(1);
   if (!membership) throw new Error("Unauthorized.");
 
@@ -165,9 +155,9 @@ export async function getCampaignRecipients(campaignId: string) {
     .select({
       email: campaignRecipients.email,
       status: campaignRecipients.status,
-      sentAt: campaignRecipients.sentAt,
-      errorMsg: campaignRecipients.errorMsg,
+      sentAt: campaignRecipients.sent_at,
+      errorMsg: campaignRecipients.error_msg,
     })
     .from(campaignRecipients)
-    .where(eq(campaignRecipients.campaignId, campaignId));
+    .where(eq(campaignRecipients.campaign_id, campaignId));
 }
