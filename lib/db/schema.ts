@@ -105,20 +105,20 @@ export const campaigns = pgTable(
   "campaigns",
   {
     id: text("id").notNull().default(sql`gen_random_uuid()`).primaryKey(),
-    teamId: text("team_id")
+    team_id: text("team_id")
       .notNull()
       .references(() => teams.id, { onDelete: "cascade" }),
     name: text("name").notNull(),
     subject: text("subject").notNull(),
-    fromEmail: text("from_email").notNull(),
+    from_email: text("from_email").notNull(),
     status: text("status").notNull().default("draft"), // draft, scheduled, sent, failed
-    scheduledAt: timestamp("scheduled_at", { withTimezone: true }),
-    createdBy: text("created_by").notNull().references(() => users.id),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    scheduled_at: timestamp("scheduled_at", { withTimezone: true }),
+    created_by: text("created_by").notNull().references(() => users.id),
+    created_at: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updated_at: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex("team_campaigns_unique_idx").on(table.teamId, table.name),
+    uniqueIndex("team_campaigns_unique_idx").on(table.team_id, table.name),
   ]
 );
 
@@ -126,15 +126,15 @@ export const campaignRecipients = pgTable(
   "campaign_recipients",
   {
     id: text("id").notNull().default(sql`gen_random_uuid()`).primaryKey(),
-    campaignId: text("campaign_id")
+    campaign_id: text("campaign_id")
       .notNull()
       .references(() => campaigns.id, { onDelete: "cascade" }),
     email: text("email").notNull(),
     status: text("status").notNull().default("pending"), // pending, sent, failed
-    sentAt: timestamp("sent_at", { withTimezone: true }),
-    errorMsg: text("error_msg"),
+    sent_at: timestamp("sent_at", { withTimezone: true }),
+    error_msg: text("error_msg"),
   },
   (table) => [
-    uniqueIndex("campaign_recipient_unique_idx").on(table.campaignId, table.email),
+    uniqueIndex("campaign_recipient_unique_idx").on(table.campaign_id, table.email),
   ]
 );
