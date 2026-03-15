@@ -64,6 +64,20 @@ export const LayoutFooterSection = () => {
           </div>
 
           <div className="flex flex-col gap-2">
+            <h3 className="font-bold text-lg">Legal</h3>
+            <div>
+              <Link href="/privacy" className="opacity-60 hover:opacity-100">
+                Privacy Policy
+              </Link>
+            </div>
+            <div>
+              <Link href="/terms" className="opacity-60 hover:opacity-100">
+                Terms of Service
+              </Link>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-2">
             <h3 className="font-bold text-lg">Help</h3>
             <div>
               <Link href="#contact" className="opacity-60 hover:opacity-100">
