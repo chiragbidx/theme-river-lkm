@@ -4,7 +4,7 @@ import { accessRequests } from "@/lib/db/schema";
 import { sendEmail } from "@/lib/email/sendgrid";
 import { eq } from "drizzle-orm";
 
-export const runtime = "edge";
+// Removed: export const runtime = "edge";
 
 export async function POST(req: NextRequest) {
   try {
