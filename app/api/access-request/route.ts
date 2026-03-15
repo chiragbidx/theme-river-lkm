@@ -11,7 +11,8 @@ export async function POST(req: NextRequest) {
     const data = await req.json();
     const email = typeof data.email === "string" ? data.email.trim().toLowerCase() : "";
     const context = typeof data.context === "string" ? data.context : undefined;
-    const ip = req.headers.get("x-forwarded-for")?.split(",")?.[0] || req.ip || null;
+    // Remove req.ip; it doesn't exist on NextRequest in Edge/serverless context
+    const ip = req.headers.get("x-forwarded-for")?.split(",")?.[0] || null;
     const userAgent = req.headers.get("user-agent") || null;
 
     // Basic email and rate-limit check
