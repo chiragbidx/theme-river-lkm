@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Check } from "lucide-react";
+import Link from "next/link";
 
 enum PopularPlan {
   NO = 0,
@@ -29,14 +30,14 @@ const plans: PlanProps[] = [
     popular: 0,
     price: 0,
     description:
-      "Ideal for prototypes and small internal tools.",
-    buttonText: "Start for free",
+      "Perfect for makers and teams launching their first email campaign.",
+    buttonText: "Request Access",
     benefitList: [
-      "Up to 3 teammates",
-      "Basic auth patterns",
-      "Core landing sections",
-      "Community support",
-      "Deploy-ready setup",
+      "Up to 2500 emails/mo",
+      "Core automation blocks",
+      "List builder forms",
+      "Basic analytics",
+      "Live chat support",
     ],
   },
   {
@@ -44,14 +45,14 @@ const plans: PlanProps[] = [
     popular: 1,
     price: 49,
     description:
-      "Best for product teams shipping customer-facing SaaS.",
-    buttonText: "Start trial",
+      "Unlock advanced segmentation, automations, and split tests for scaling startups.",
+    buttonText: "Request Access",
     benefitList: [
-      "Unlimited teammates",
-      "Advanced section set",
-      "Billing-ready models",
-      "Priority support",
-      "Team workflows",
+      "Unlimited sending",
+      "Advanced triggers & flows",
+      "Power analytics",
+      "Multi-list management",
+      "API access",
     ],
   },
   {
@@ -59,14 +60,14 @@ const plans: PlanProps[] = [
     popular: 0,
     price: 199,
     description:
-      "For teams requiring compliance, support SLAs, and custom rollout.",
-    buttonText: "Contact sales",
+      "Get compliance, integrations, custom onboarding, and premium support.",
+    buttonText: "Contact us",
     benefitList: [
-      "Security review support",
-      "SSO/SAML integration path",
-      "Dedicated onboarding",
-      "Phone and email support",
-      "Architecture advisory",
+      "Dedicated send domain",
+      "Integration support",
+      "SOC2/ISO-ready",
+      "Onboarding workshop",
+      "SAML/SSO",
     ],
   },
 ];
@@ -79,11 +80,11 @@ export const LayoutPricingSection = () => {
       </h2>
 
       <h2 className="text-3xl md:text-4xl text-center font-bold mb-4">
-        Pricing for every stage
+        Pricing for every campaign
       </h2>
 
       <h3 className="md:w-1/2 mx-auto text-xl text-center text-muted-foreground pb-14">
-        Start lean, then scale to enterprise-grade workflows as your product grows.
+        Join our early access and lock-in discounts as we launch.
       </h3>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-4">
@@ -122,14 +123,17 @@ export const LayoutPricingSection = () => {
               </CardContent>
 
               <CardFooter>
-                <Button
-                  variant={
-                    popular === PopularPlan?.YES ? "default" : "secondary"
-                  }
-                  className="w-full"
-                >
-                  {buttonText}
-                </Button>
+                {
+                  buttonText.toLowerCase().includes("contact") ? (
+                    <Button asChild variant="secondary" className="w-full">
+                      <Link href="#contact">{buttonText}</Link>
+                    </Button>
+                  ) : (
+                    <Button asChild className="w-full">
+                      <Link href="/access-request">{buttonText}</Link>
+                    </Button>
+                  )
+                }
               </CardFooter>
             </Card>
           )
@@ -137,4 +141,4 @@ export const LayoutPricingSection = () => {
       </div>
     </section>
   );
-};
+}
