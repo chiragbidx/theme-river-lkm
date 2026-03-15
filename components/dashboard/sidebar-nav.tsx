@@ -9,6 +9,8 @@ import {
   Settings,
   Users,
   CreditCard,
+  Shield,
+  Gavel,
 } from "lucide-react";
 import {
   Collapsible,
@@ -21,6 +23,7 @@ type NavItem = {
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   disabled?: boolean;
+  external?: boolean;
 };
 
 const sections: { title: string; items: NavItem[] }[] = [
@@ -38,6 +41,13 @@ const sections: { title: string; items: NavItem[] }[] = [
       { label: "Settings", href: "/dashboard/settings", icon: Settings },
     ],
   },
+  {
+    title: "Legal",
+    items: [
+      { label: "Privacy Policy", href: "/privacy", icon: Shield },
+      { label: "Terms of Service", href: "/terms", icon: Gavel },
+    ],
+  },
 ];
 
 function NavLink({
@@ -46,12 +56,14 @@ function NavLink({
   icon: Icon,
   isActive,
   disabled,
+  external,
 }: {
   href: string;
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   isActive: boolean;
   disabled?: boolean;
+  external?: boolean;
 }) {
   if (disabled) {
     return (
@@ -65,6 +77,8 @@ function NavLink({
   return (
     <Link
       href={href}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
       className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
         isActive
           ? "bg-primary/10 text-primary font-medium"
@@ -127,7 +141,7 @@ export function SidebarNav() {
             title={section.title}
             items={section.items}
             pathname={pathname}
-            defaultOpen
+            defaultOpen={section.title !== "Legal"}
           />
         ))}
       </nav>
